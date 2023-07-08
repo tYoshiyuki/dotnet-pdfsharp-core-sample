@@ -46,9 +46,6 @@ namespace DotNetPdfSharpCoreSample.Lib.Test
 
             // Assert
             Assert.AreEqual(4190, merged.Length);
-
-            using FileStream fs = new("result.pdf", FileMode.Create);
-            merged.CopyTo(fs);
         }
     }
 }

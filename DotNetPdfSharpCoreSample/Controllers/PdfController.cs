@@ -32,7 +32,7 @@ namespace DotNetPdfSharpCoreSample.Controllers
         [Produces("application/octet-stream", Type = typeof(FileResult))]
         public async Task<IActionResult> MergePdfList([FromForm] MergePdfListRequest request)
         {
-            List<Stream> inputStreamList = new();
+            IEnumerable<Stream> inputStreamList = Enumerable.Empty<Stream>();
 
             try
             {
@@ -49,10 +49,10 @@ namespace DotNetPdfSharpCoreSample.Controllers
                     return inputStream;
                 });
 
-                IEnumerable<Stream> inputs = await Task.WhenAll(inputTask);
+                inputStreamList = await Task.WhenAll(inputTask);
 
                 // マージ処理の実行
-                Stream outputStream = _pdfSharpService.Merge(inputs);
+                Stream outputStream = _pdfSharpService.Merge(inputStreamList);
 
                 return File(outputStream, "application/octet-stream", fileDownloadName: "Merged" + DateTime.Now.Ticks + ".pdf");
             }
@@ -64,7 +64,7 @@ namespace DotNetPdfSharpCoreSample.Controllers
             }
             finally
             {
-                inputStreamList.ForEach(x => x.Dispose());
+                inputStreamList.ToList().ForEach(x => x.Dispose());
             }
         }
     }

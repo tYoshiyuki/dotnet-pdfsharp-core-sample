@@ -13,24 +13,31 @@ namespace DotNetPdfSharpCoreSample.Lib
         public Stream Merge(IEnumerable<Stream> streams)
         {
             var streamList = streams.ToList();
-            if (!streamList.Any())
+            if (streamList.Count < 2)
             {
-                throw new ArgumentNullException(nameof(streams));
+                throw new ArgumentException("Number of streams must be 2 or more.", nameof(streams));
             }
 
-            using var merged = new PdfDocument();
-
-            foreach (Stream file in streamList)
+            try
             {
-                foreach (PdfPage? page in PdfReader.Open(file, PdfDocumentOpenMode.Import).Pages)
+                using var merged = new PdfDocument();
+
+                foreach (Stream file in streamList)
                 {
-                    merged.AddPage(page);
+                    foreach (PdfPage? page in PdfReader.Open(file, PdfDocumentOpenMode.Import).Pages)
+                    {
+                        merged.AddPage(page);
+                    }
                 }
-            }
 
-            var stream = new MemoryStream();
-            merged.Save(stream, false);
-            return stream;
+                var stream = new MemoryStream();
+                merged.Save(stream, false);
+                return stream;
+            }
+            catch (Exception ex)
+            {
+                throw new PdfSharpServiceException("MergePdfList failed.", ex);
+            }
         }
     }
 }

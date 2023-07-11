@@ -12,9 +12,15 @@ namespace DotNetPdfSharpCoreSample.Lib
         /// <inheritdoc />
         public Stream Merge(IEnumerable<Stream> streams)
         {
+            var streamList = streams.ToList();
+            if (!streamList.Any())
+            {
+                throw new ArgumentNullException(nameof(streams));
+            }
+
             using var merged = new PdfDocument();
 
-            foreach (Stream file in streams)
+            foreach (Stream file in streamList)
             {
                 foreach (PdfPage? page in PdfReader.Open(file, PdfDocumentOpenMode.Import).Pages)
                 {

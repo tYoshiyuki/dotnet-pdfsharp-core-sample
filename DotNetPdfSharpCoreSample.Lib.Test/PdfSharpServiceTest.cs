@@ -47,5 +47,18 @@ namespace DotNetPdfSharpCoreSample.Lib.Test
             // Assert
             Assert.AreEqual(4190, merged.Length);
         }
+
+        /// <summary>
+        /// <see cref="PdfSharpService.Merge"/> が引数空の場合に例外が発生することを確認します。
+        /// </summary>
+        [TestMethod]
+        public void Merge_Ng_ArgEmpty()
+        {
+            // Arrange
+            var service = new PdfSharpService();
+
+            // Act・Assert
+            Assert.ThrowsException<ArgumentException>(() => service.Merge(new List<Stream>()));
+        }
     }
 }
